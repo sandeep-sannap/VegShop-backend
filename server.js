@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const { DB_URL } = require("./config");
+const { DB_URL, LOCAL_DB } = require("./config");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
@@ -11,10 +11,15 @@ const uploadRouter = require("./routes/uploadRoute");
 const orderRouter = require("./routes/orderRoute");
 const path = require("path");
 
+mongoose.set("bufferCommands", false);
+
 //DATABASE CONNECTION
 
 mongoose.connect(
+  // LOCAL_DB,
+  // "mongodb://127.0.0.1:27017/veg_store",
   DB_URL,
+
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -23,8 +28,10 @@ mongoose.connect(
   (err) => {
     if (err) {
       console.log("connection un successfull");
+      console.log(err);
+    } else {
+      console.log("database connected succesffuly");
     }
-    console.log("database connected succesffuly");
   }
 );
 
@@ -42,6 +49,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/uploads", uploadRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/stripe", require("./routes/stripe"));
 
 //Error Handler
 app.use(errorHandler);
