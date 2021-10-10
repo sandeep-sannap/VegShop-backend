@@ -11,30 +11,34 @@ const uploadRouter = require("./routes/uploadRoute");
 const orderRouter = require("./routes/orderRoute");
 const path = require("path");
 
+const dbConnection = require("./db");
+
 mongoose.set("bufferCommands", false);
 
-//DATABASE CONNECTION
-(async () => {
-  await mongoose.connect(
-    // LOCAL_DB,
-    // "mongodb://127.0.0.1:27017/veg_store",
-    DB_URL,
+dbConnection();
 
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-    },
-    (err) => {
-      if (err) {
-        console.log("connection un successfull");
-        console.log(err);
-      } else {
-        console.log("database connected succesffuly");
-      }
-    }
-  );
-})();
+//DATABASE CONNECTION
+// (async () => {
+//   await mongoose.connect(
+//     // LOCAL_DB,
+//     // "mongodb://127.0.0.1:27017/veg_store",
+//     DB_URL,
+
+//     {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true,
+//       useFindAndModify: false,
+//     },
+//     (err) => {
+//       if (err) {
+//         console.log("connection un successfull");
+//         console.log(err);
+//       } else {
+//         console.log("database connected succesffuly");
+//       }
+//     }
+//   );
+// })();
 
 global.appRoot = path.resolve(__dirname);
 
