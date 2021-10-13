@@ -1,5 +1,6 @@
 const { Order } = require("../models/order");
 const CustomErrorHandler = require("../services/CustomErrorHandler");
+const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 const getOrders = async (req, res, next) => {
   try {
@@ -24,26 +25,40 @@ const addOrder = async (req, res, next) => {
     taxPrice,
     shippingPrice,
     orderTotal,
+    tokenId,
   } = req.body;
+  stripe.charges.create(
+    {
+      source: tokenId,
+      amount: orderTotal * 100,
+      currency: "INR",
+    },
+    (stripeErr, stripeRes) => {
+      if (stripeErr) {
+        next(CustomErrorHandler.serverError());
+      } else {
+        const order = new Order({
+          orderItems,
+          user: req.user._id,
+          shippingAddress,
+          paymentMethod,
+          itemsTotalPrice,
+          taxPrice,
+          shippingPrice,
+          orderTotal,
+        });
 
-  const order = new Order({
-    orderItems,
-    user: req.user._id,
-    shippingAddress,
-    paymentMethod,
-    itemsTotalPrice,
-    taxPrice,
-    shippingPrice,
-    orderTotal,
-  });
-  try {
-    const createdOrder = await order.save();
-
-    res.json(createdOrder);
-  } catch (error) {
-    console.log(error);
-    return next(error);
-  }
+        order
+          .save()
+          .then((savedOrder) => {
+            res.status(201).json(savedOrder);
+          })
+          .catch((err) => {
+            next(CustomErrorHandler.serverError());
+          });
+      }
+    }
+  );
 };
 
 const updateStatus = async (req, res, next) => {

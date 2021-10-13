@@ -1,7 +1,7 @@
 const CustomErrorHandler = require("../services/CustomErrorHandler");
 
 const errorHandler = (err, req, res, next) => {
-  // console.log(err);
+  console.log(err);
   let statusCode = 500;
   let data = {
     message: "Internal server error",

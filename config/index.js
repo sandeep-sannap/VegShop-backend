@@ -1,5 +1,5 @@
 require("dotenv").config();
 
-const { DEBUG_MODE, DB_URL, JWT_SECRET, APP_URL } = process.env;
+const { DB_URL, JWT_SECRET, LOCAL_DB } = process.env;
 
-module.exports = { DEBUG_MODE, DB_URL, JWT_SECRET, APP_URL };
+module.exports = { DB_URL, JWT_SECRET, LOCAL_DB };
