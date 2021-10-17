@@ -75,8 +75,11 @@ const addProduct = async (req, res, next) => {
 // };
 
 const deleteProduct = async (req, res, next) => {
+  console.log(req.params.id);
   try {
-    const product = await Product.findOneAndRemove(req.params.id);
+    const product = await Product.findOneAndRemove({ _id: req.params.id });
+    console.log("deleted product");
+    console.log(product);
     if (!product) {
       return next(CustomErrorHandler.notFound());
     } else {
