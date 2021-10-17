@@ -79,24 +79,15 @@ const deleteProduct = async (req, res, next) => {
     const product = await Product.findOneAndRemove(req.params.id);
     if (!product) {
       return next(CustomErrorHandler.notFound());
-    }
-
-    const imagePath = product.image;
-
-    fs.unlink(`${appRoot}/${imagePath}`, (err) => {
-      if (err) {
-        return next(CustomErrorHandler.serverError());
-      }
+    } else {
       return res.json(product);
-    });
+    }
   } catch (error) {
-    console.log(error);
     return next(error);
   }
 };
 
 const getAllProducts = async (req, res, next) => {
-  //pagination use mongoose.pagination
   try {
     const products = await Product.find().select("-updatedAt -__v -createdAt");
     return res.json(products);
